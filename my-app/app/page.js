@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const userEmail = session?.user?.email;
 
   const [tasks, setTasks] = useState([]);
   const [holidays, setHolidays] = useState([]);
@@ -54,9 +55,9 @@ export default function Home() {
   }, []);
 
   const loadData = useCallback(async () => {
-    if (!session?.user?.email) return;
+    if (!userEmail) return; // Use the variable here
     try {
-      const res = await fetch(`/api/records?email=${session.user.email}`);
+      const res = await fetch(`/api/records?email=${userEmail}`);
       if (res.ok) {
         const data = await res.json();
         setTasks(data);
@@ -64,7 +65,7 @@ export default function Home() {
     } catch (err) {
       console.error("Eroare date:", err);
     }
-  }, [session?.user?.email]);
+  }, [userEmail]);
 
   useEffect(() => {
     if (session) {

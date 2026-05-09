@@ -1,4 +1,4 @@
-import clientPromise from "@/lib/mongodb";
+import { clientPromise } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 
 // POST: Salvează un task nou legat de email-ul utilizatorului
