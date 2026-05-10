@@ -1,7 +1,7 @@
 import { clientPromise } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 
-// POST: Salvează un task nou legat de email-ul utilizatorului
+
 export async function POST(request) {
   try {
     const { titlu, descriere, prioritate, deadline, userEmail } = await request.json();
@@ -13,8 +13,8 @@ export async function POST(request) {
       descriere,
       prioritate,
       deadline,
-      user: userEmail, // Salvăm email-ul pentru filtrare
-      completed: false, // Status implicit
+      user: userEmail, 
+      completed: false,
       createdAt: new Date()
     });
 
@@ -24,7 +24,7 @@ export async function POST(request) {
   }
 }
 
-// GET: Aduce DOAR task-urile utilizatorului specificat în URL
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -37,10 +37,10 @@ export async function GET(request) {
     const client = await clientPromise;
     const db = client.db("todo_db");
 
-    // Filtrăm în baza de date după câmpul "user"
+  
     const todos = await db.collection("todos")
       .find({ user: email })
-      .sort({ createdAt: -1 }) // Cele mai noi primele
+      .sort({ createdAt: -1 }) 
       .toArray();
 
     return NextResponse.json(todos, { status: 200 });

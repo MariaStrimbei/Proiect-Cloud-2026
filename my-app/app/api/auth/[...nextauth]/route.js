@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { getCollection } from "@/lib/mongodb";
 import bcrypt from "bcryptjs";
 
-// In v5, we destructure "handlers" from the NextAuth initialization
+
 const { handlers } = NextAuth({
   providers: [
     CredentialsProvider({
@@ -30,5 +30,5 @@ const { handlers } = NextAuth({
   pages: { signIn: "/login" },
 });
 
-// Export the GET and POST handlers specifically
+
 export const { GET, POST } = handlers;

@@ -55,7 +55,7 @@ export default function Home() {
   }, []);
 
   const loadData = useCallback(async () => {
-    if (!userEmail) return; // Use the variable here
+    if (!userEmail) return; 
     try {
       const res = await fetch(`/api/records?email=${userEmail}`);
       if (res.ok) {
@@ -118,11 +118,11 @@ export default function Home() {
     <div style={containerStyle}>
       <header style={headerStyle}>
         <div>
-          <h1 style={logoStyle}>Task manager</h1>
+          <h1 style={logoStyle}>Task Manager</h1>
           {weather && (
             <div style={weatherHeaderStyle}>
               București: <strong>{weather.temperature_2m}°C</strong> 
-              <span style={weatherDetailStyle}> {weather.wind_speed_10m} km/h</span>
+              <span style={weatherDetailStyle}>🌬️ {weather.wind_speed_10m} km/h | 💧 {weather.relative_humidity_2m}%</span>
             </div>
           )}
         </div>
@@ -144,7 +144,9 @@ export default function Home() {
             ))}
           </div>
         </section>
+
         <div style={gridStyle}>
+   
           <section style={cardStyle}>
             <h2 style={sectionTitleStyle}>{editingId ? "✏️ Editează Task" : "➕ Task nou"}</h2>
             <form onSubmit={handleSave} style={formStyle}>
@@ -159,6 +161,7 @@ export default function Home() {
             </form>
           </section>
 
+       
           <section style={cardStyle}>
             <h2 style={sectionTitleStyle}>📋 Listă task-uri</h2>
             <div style={tableWrapperStyle}>
@@ -166,7 +169,7 @@ export default function Home() {
                 <thead>
                   <tr style={tableHeaderRowStyle}>
                     <th>Status</th>
-                    <th>Task</th>
+                    <th>Task & Descriere</th>
                     <th>Prioritate</th>
                     <th style={{textAlign: 'right'}}>Acțiuni</th>
                   </tr>
@@ -174,11 +177,16 @@ export default function Home() {
                 <tbody>
                   {tasks.map((t) => (
                     <tr key={t._id} style={tableRowStyle}>
-                      <td>
+                      <td style={{ width: "50px" }}>
                         <input type="checkbox" checked={t.completed || false} onChange={() => toggleDone(t)} style={checkboxStyle} />
                       </td>
                       <td style={{ ...taskNameStyle, textDecoration: t.completed ? "line-through" : "none", color: t.completed ? "#999" : "#333" }}>
-                        {t.task}
+                        <div style={{ fontWeight: "600", fontSize: "0.95rem" }}>{t.task}</div>
+                        {t.description && (
+                          <div style={{ fontSize: "0.8rem", color: t.completed ? "#bbb" : "#666", marginTop: "4px", fontStyle: "italic" }}>
+                            {t.description}
+                          </div>
+                        )}
                       </td>
                       <td>
                         <span style={getPriorityStyle(t.priority)}>{t.priority}</span>
@@ -201,71 +209,34 @@ export default function Home() {
 
 const getPriorityStyle = (p) => {
   const colors = { High: '#ff4d4f', Medium: '#faad14', Low: '#52c41a' };
-  return {
-    padding: '2px 8px',
-    borderRadius: '12px',
-    fontSize: '0.7rem',
-    color: '#fff',
-    background: colors[p] || '#ccc',
-    fontWeight: 'bold'
-  };
+  return { padding: '3px 8px', borderRadius: '12px', fontSize: '0.7rem', color: '#fff', background: colors[p] || '#ccc', fontWeight: 'bold' };
 };
 
 const containerStyle = { fontFamily: "'Inter', sans-serif", background: "#f0f2f5", minHeight: "100vh", color: "#1a1a1a" };
 const loadingStyle = { textAlign: "center", padding: "100px", fontSize: "1.2rem", color: "#666" };
-
-const headerStyle = { 
-  display: "flex", justifyContent: "space-between", alignItems: "center", 
-  padding: "1rem 5%", background: "#fff", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", 
-  position: "sticky", top: 0, zIndex: 10 
-};
-
-const logoStyle = { margin: 0, fontSize: "1.4rem", color: "#1890ff", letterSpacing: "-0.5px" };
-
+const headerStyle = { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 5%", background: "#fff", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", position: "sticky", top: 0, zIndex: 10 };
+const logoStyle = { margin: 0, fontSize: "1.4rem", color: "#1890ff", fontWeight: "800" };
 const weatherHeaderStyle = { fontSize: "0.85rem", color: "#666", marginTop: "4px" };
 const weatherDetailStyle = { marginLeft: "12px", paddingLeft: "12px", borderLeft: "1px solid #ddd" };
-
 const userActionsStyle = { display: "flex", alignItems: "center", gap: "20px", fontSize: "0.9rem" };
-
-const logoutButtonStyle = { 
-  padding: "6px 16px", background: "transparent", border: "1px solid #ff4d4f", 
-  color: "#ff4d4f", borderRadius: "6px", cursor: "pointer", transition: "0.2s" 
-};
-
+const logoutButtonStyle = { padding: "6px 16px", background: "transparent", border: "1px solid #ff4d4f", color: "#ff4d4f", borderRadius: "6px", cursor: "pointer" };
 const mainContentStyle = { maxWidth: "1200px", margin: "0 auto", padding: "2rem 5%" };
-
 const sectionStyle = { marginBottom: "2rem" };
 const sectionTitleStyle = { fontSize: "1rem", fontWeight: "600", marginBottom: "1.2rem", color: "#444" };
-
 const holidayScrollStyle = { display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "10px" };
-const holidayItemStyle = { 
-  minWidth: "180px", background: "#fff", padding: "12px", borderRadius: "10px", 
-  boxShadow: "0 2px 4px rgba(0,0,0,0.04)", borderLeft: "4px solid #1890ff" 
-};
+const holidayItemStyle = { minWidth: "180px", background: "#fff", padding: "12px", borderRadius: "10px", boxShadow: "0 2px 4px rgba(0,0,0,0.04)", borderLeft: "4px solid #1890ff" };
 const holidayNameStyle = { display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "4px" };
 const holidayDateStyle = { fontSize: "0.75rem", color: "#888" };
-
 const gridStyle = { display: "grid", gridTemplateColumns: "1fr 2fr", gap: "2rem" };
-
 const cardStyle = { background: "#fff", padding: "1.5rem", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" };
-
 const formStyle = { display: "flex", flexDirection: "column", gap: "12px" };
-const inputStyle = { 
-  padding: "10px", borderRadius: "8px", border: "1px solid #d9d9d9", 
-  fontSize: "0.9rem", outline: "none", transition: "0.2s" 
-};
-const submitButtonStyle = { 
-  padding: "12px", background: "#1890ff", color: "#fff", border: "none", 
-  borderRadius: "8px", cursor: "pointer", fontWeight: "600", marginTop: "10px" 
-};
-
+const inputStyle = { padding: "10px", borderRadius: "8px", border: "1px solid #d9d9d9", fontSize: "0.9rem" };
+const submitButtonStyle = { padding: "12px", background: "#1890ff", color: "#fff", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "600" };
 const tableWrapperStyle = { overflowX: "auto" };
 const tableStyle = { width: "100%", borderCollapse: "collapse" };
 const tableHeaderRowStyle = { borderBottom: "2px solid #f0f0f0", textAlign: "left", fontSize: "0.85rem", color: "#888" };
-const tableRowStyle = { borderBottom: "1px solid #f0f0f0", transition: "0.2s" };
-
-const taskNameStyle = { padding: "12px 8px", fontSize: "0.9rem" };
+const tableRowStyle = { borderBottom: "1px solid #f0f0f0" };
+const taskNameStyle = { padding: "12px 8px" };
 const checkboxStyle = { width: "18px", height: "18px", cursor: "pointer" };
-
 const editBtnStyle = { background: "none", border: "none", color: "#1890ff", cursor: "pointer", marginRight: "10px", fontSize: "0.85rem" };
 const deleteBtnStyle = { background: "none", border: "none", color: "#ff4d4f", cursor: "pointer", fontSize: "0.85rem" };
