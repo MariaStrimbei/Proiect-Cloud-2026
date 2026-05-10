@@ -5,8 +5,6 @@ import { ObjectId } from "mongodb";
 export async function GET(request) {
   try {
     const collection = await getCollection("records");
-    
-
     const { searchParams } = new URL(request.url);
     const email = searchParams.get("email");
 
@@ -15,7 +13,6 @@ export async function GET(request) {
     }
 
     const tasks = await collection.find({ userEmail: email }).toArray();
-    
     return NextResponse.json(tasks);
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 });
@@ -26,7 +23,6 @@ export async function POST(request) {
   try {
     const body = await request.json();
     const collection = await getCollection("records");
-    
 
     const result = await collection.insertOne({
       task: body.task,
@@ -44,14 +40,23 @@ export async function POST(request) {
   }
 }
 
+// --- UPDATED PATCH: Now supports both Toggle and Edit ---
 export async function PATCH(request) {
   try {
-    const { id, completed } = await request.json();
+    const body = await request.json();
+    const { id, ...updateData } = body; // Get the ID, and put EVERYTHING ELSE in updateData
+
+    if (!id) {
+      return NextResponse.json({ error: "ID-ul lipsește" }, { status: 400 });
+    }
+
     const collection = await getCollection("records");
 
+    // We use $set: updateData so it saves whatever was sent 
+    // (task, priority, description, OR completed)
     const result = await collection.updateOne(
       { _id: new ObjectId(id) },
-      { $set: { completed: completed } }
+      { $set: updateData }
     );
 
     if (result.matchedCount === 0) {
